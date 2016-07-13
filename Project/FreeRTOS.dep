@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project>
+  <fileVersion>2</fileVersion>
+  <fileChecksum>2693055448</fileChecksum>
+  <configuration>
+    <name>Debug</name>
+    <outputs>
+      <file>$PROJ_DIR$\..\OS\tasks.c</file>
+      <file>$PROJ_DIR$\..\OS\port.c</file>
+      <file>$PROJ_DIR$\..\OS\timers.c</file>
+      <file>$PROJ_DIR$\..\OS\queue.c</file>
+      <file>$PROJ_DIR$\..\OS\portasm.s</file>
+      <file>$PROJ_DIR$\..\OS\heap_2.c</file>
+      <file>$PROJ_DIR$\..\OS\list.c</file>
+      <file>$PROJ_DIR$\..\Library\src\misc.c</file>
+      <file>$PROJ_DIR$\..\Library\src\stm32f10x_gpio.c</file>
+      <file>$PROJ_DIR$\..\Library\src\stm32f10x_flash.c</file>
+      <file>$PROJ_DIR$\..\Library\src\stm32f10x_lib.c</file>
+      <file>$PROJ_DIR$\..\Library\src\stm32f10x_rcc.c</file>
+      <file>$PROJ_DIR$\..\Library\src\stm32f10x_spi.c</file>
+      <file>$PROJ_DIR$\..\Library\src\stm32f10x_tim.c</file>
+      <file>$PROJ_DIR$\..\Library\src\stm32f10x_usart.c</file>
+      <file>$PROJ_DIR$\..\Startup\stm32f10x_vector.c</file>
+      <file>$PROJ_DIR$\..\Library\src\core_cm3.c</file>
+      <file>$PROJ_DIR$\..\Startup\cortexm3_macro.s</file>
+      <file>$PROJ_DIR$\..\User\comfunc.c</file>
+      <file>$PROJ_DIR$\..\User\alloter.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\FreeRTOS.pbd</file>
+      <file>$PROJ_DIR$\Debug\Obj\cortexm3_macro.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_vector.o</file>
+      <file>$PROJ_DIR$\Debug\Exe\FreeRTOS.out</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_tim.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\tasks.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\list.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\task_timer.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\portasm.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_it.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\smart_frame.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\comfunc.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\uart.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_lib.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_spi.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_gpio.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\dev_ctrl.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_vector.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_rcc.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\queue.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\heap_2.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\core_cm3.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\heap_2.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_it.pbi</file>
+      <file>$PROJ_DIR$\Debug\Exe\FreeRTOS.bin</file>
+      <file>$PROJ_DIR$\Debug\Obj\port.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\misc.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\misc.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_spi.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_usart.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\smart_frame.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\key.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_rcc.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_usart.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_flash.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_tim.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\alloter.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\alloter.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\dev_ctrl.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\spiflash.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\uart.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\tasks.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\key.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\spiflash.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_lib.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\core_cm3.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\timers.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\task_timer.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\timers.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_flash.pbi</file>
+      <file>$PROJ_DIR$\..\User\spiflash.c</file>
+      <file>$PROJ_DIR$\..\User\uart.c</file>
+      <file>$PROJ_DIR$\..\User\key.c</file>
+      <file>$PROJ_DIR$\..\User\debug.c</file>
+      <file>$PROJ_DIR$\..\User\debug.h</file>
+      <file>$PROJ_DIR$\..\User\dev_ctrl.c</file>
+      <file>$PROJ_DIR$\..\User\dev_ctrl.h</file>
+      <file>$PROJ_DIR$\..\User\smart_frame.c</file>
+      <file>$PROJ_DIR$\..\User\smart_frame.h</file>
+      <file>$PROJ_DIR$\..\User\task_timer.c</file>
+      <file>$PROJ_DIR$\..\User\task_timer.h</file>
+      <file>$PROJ_DIR$\FreeRTOSConfig.h</file>
+      <file>$PROJ_DIR$\..\User\main.c</file>
+      <file>$PROJ_DIR$\..\User\stm32f10x_it.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\debug.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\debug.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\list.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\comfunc.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\queue.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\port.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\stm32f10x_gpio.pbi</file>
+    </outputs>
+    <file>
+      <name>$PROJ_DIR$\..\OS\tasks.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 63</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 25</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\OS\port.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 91</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 47</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\OS\timers.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 70</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 68</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\OS\queue.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 40</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 90</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\OS\portasm.s</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 28</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\OS\heap_2.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 41</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 43</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\OS\list.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 26</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 88</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Library\src\misc.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 49</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 48</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Library\src\stm32f10x_gpio.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 92</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 36</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Library\src\stm32f10x_flash.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 71</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 56</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Library\src\stm32f10x_lib.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 66</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 34</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Library\src\stm32f10x_rcc.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 54</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 39</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Library\src\stm32f10x_spi.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 35</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 50</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Library\src\stm32f10x_tim.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 57</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 24</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Library\src\stm32f10x_usart.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 55</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 51</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Startup\stm32f10x_vector.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 38</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 22</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Library\src\core_cm3.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 42</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 67</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Startup\cortexm3_macro.s</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 21</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\comfunc.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 31</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 89</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\alloter.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 58</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 59</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 23</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Exe\FreeRTOS.out</name>
+      <outputs>
+        <tool>
+          <name>OBJCOPY</name>
+          <file> 46</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\spiflash.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 65</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 61</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\uart.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 33</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 62</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\key.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 64</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 53</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\debug.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 86</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 87</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\dev_ctrl.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 60</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 37</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\smart_frame.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 52</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 30</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\task_timer.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 27</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 69</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\main.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 32</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 44</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\User\stm32f10x_it.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 45</file>
+        </tool>
+        <tool>
+          <name>ICCARM</name>
+          <file> 29</file>
+        </tool>
+      </outputs>
+    </file>
+  </configuration>
+</project>
+
+

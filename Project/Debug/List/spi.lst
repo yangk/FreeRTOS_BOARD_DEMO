@@ -1,0 +1,402 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.20.2.7424/W32 for ARM        04/Jul/2016  15:08:29
+# Copyright 1999-2014 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  C:\Users\yk\Desktop\代码\学习\FreeRTOS_BOARD\User\spi.c
+#    Command line =  
+#        C:\Users\yk\Desktop\代码\学习\FreeRTOS_BOARD\User\spi.c -D
+#        VECT_TAB_FLASH -D IAR_ARM_CM3 -lcN
+#        C:\Users\yk\Desktop\代码\学习\FreeRTOS_BOARD\Project\Debug\List\
+#        --diag_suppress Pa082,pe191 -o
+#        C:\Users\yk\Desktop\代码\学习\FreeRTOS_BOARD\Project\Debug\Obj\
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa
+#        --no_clustering --no_scheduling --debug --endian=little
+#        --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench 7.0\arm\INC\c\DLib_Config_Full.h"
+#        -I C:\Users\yk\Desktop\代码\学习\FreeRTOS_BOARD\Project\.\ -I
+#        C:\Users\yk\Desktop\代码\学习\FreeRTOS_BOARD\Project\..\Library\inc\
+#        -I C:\Users\yk\Desktop\代码\学习\FreeRTOS_BOARD\Project\..\OS\include\
+#        -I
+#        C:\Users\yk\Desktop\代码\学习\FreeRTOS_BOARD\Project\..\OS\common\include\
+#        -Ol --use_c++_inline
+#    List file    =  
+#        C:\Users\yk\Desktop\代码\学习\FreeRTOS_BOARD\Project\Debug\List\spi.lst
+#    Object file  =  
+#        C:\Users\yk\Desktop\代码\学习\FreeRTOS_BOARD\Project\Debug\Obj\spi.o
+#
+###############################################################################
+
+C:\Users\yk\Desktop\代码\学习\FreeRTOS_BOARD\User\spi.c
+      1          #include "stm32f10x.h"
+      2          #include "stm32f10x_lib.h"
+      3          #include "spi.h"
+      4          
+      5          spi_flash_cmd_t spi_flash_list[] =
+      6          {
+      7              {
+      8                  0x9F,   /* read flash id */
+      9                  0x00,
+     10                  0x02,   /* Page program */
+     11                  0x06,   /* Write enable */
+     12                  0x03,   /* Read from Memory */
+     13                  0x05,   /* Read Status Register */
+     14                  0x20,   /* Sector Erase */
+     15                  0xD8,   /* Block Erase */
+     16                  0xC7,   /* Chip Erase */
+     17                  0x100,  /* Chip page size */
+     18                  0x1000, /* Chip sector size */
+     19              }
+     20          };
+     21          //---------------------------------------------------------------------------------------------
+     22          void spi_param_init(SPI_TypeDef *spix)
+     23          {
+     24              SPI_InitTypeDef  spi_init_struct;
+     25              SPI_I2S_DeInit(spix);
+     26          
+     27              /* 配置 SPI 参数 */
+     28              /* 两线全双工模式 */
+     29              spi_init_struct.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+     30              /* 配置为主模式 */
+     31              spi_init_struct.SPI_Mode = SPI_Mode_Master;
+     32              /* 数据传输大小为 8 比特 */
+     33              spi_init_struct.SPI_DataSize = SPI_DataSize_8b;
+     34              /* 工作在模式 0 */
+     35              spi_init_struct.SPI_CPOL = SPI_CPOL_Low;
+     36              spi_init_struct.SPI_CPHA = SPI_CPHA_1Edge;
+     37              /* 软件控制 CS 脚 */
+     38              spi_init_struct.SPI_NSS = SPI_NSS_Soft;
+     39              /* 时钟为 sys_clock / 4 = 72MHz / 4 */
+     40              spi_init_struct.SPI_BaudRatePrescaler = SPI_FLASH_SPEED;
+     41              /* 先传最高位 */
+     42              spi_init_struct.SPI_FirstBit = SPI_FirstBit_MSB;
+     43              spi_init_struct.SPI_CRCPolynomial = 7;
+     44              SPI_Init(spix, &spi_init_struct);
+     45              
+     46              SPI_CalculateCRC(spix, DISABLE);
+     47          }
+     48          //---------------------------------------------------------------------------------------------
+     49          void spi1_init(void)
+     50          {
+     51              spi1_rcc_init();
+     52              spi1_gpio_init();
+     53              spi_param_init(SPI1);
+     54              SPI_FLASH_CS_HIGH();
+     55              SPI_SD_CS_HIGH();
+     56              SPI_Cmd(SPI1, ENABLE);
+     57          }
+     58          //---------------------------------------------------------------------------------------------
+     59          uint8_t spi_send_byte(SPI_TypeDef *spix, uint8_t byte)
+     60          {
+     61              /* 等待，直到 DR 寄存器非空 */
+     62              while (SPI_I2S_GetFlagStatus(spix, SPI_I2S_FLAG_TXE) == RESET);
+     63          
+     64              /* 向 SPI 总线发送一个字节 */
+     65              SPI_I2S_SendData(spix, byte);
+     66          
+     67              /* 等待接收一个字节 */
+     68              while (SPI_I2S_GetFlagStatus(spix, SPI_I2S_FLAG_RXNE) == RESET);
+     69          
+     70              /* 返回 SPI 总线上读取的字节 */
+     71              return SPI_I2S_ReceiveData(spix);
+     72          }
+     73          //---------------------------------------------------------------------------------------------
+     74          void spi1_rcc_init(void)
+     75          {   
+     76              RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO , ENABLE);
+     77              RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
+     78          }
+     79          //---------------------------------------------------------------------------------------------
+     80          void spi1_gpio_init(void)
+     81          {
+     82              GPIO_InitTypeDef gpio_init_struct;
+     83              RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO , ENABLE);
+     84          
+     85              /* SCK */    
+     86              gpio_init_struct.GPIO_Pin = GPIO_Pin_5;
+     87              gpio_init_struct.GPIO_Speed = GPIO_Speed_50MHz;
+     88              gpio_init_struct.GPIO_Mode = GPIO_Mode_AF_PP;
+     89              GPIO_Init(GPIOA, &gpio_init_struct);
+     90          
+     91              /* MOSI */
+     92              gpio_init_struct.GPIO_Pin = GPIO_Pin_7;
+     93              GPIO_Init(GPIOA, &gpio_init_struct);
+     94          
+     95              /* MISO */
+     96              gpio_init_struct.GPIO_Pin = GPIO_Pin_6;
+     97              gpio_init_struct.GPIO_Mode = GPIO_Mode_IN_FLOATING;  
+     98              GPIO_Init(GPIOA, &gpio_init_struct);
+     99          
+    100              /* FLASH CS */
+    101              gpio_init_struct.GPIO_Pin = GPIO_Pin_4;
+    102              gpio_init_struct.GPIO_Mode = GPIO_Mode_Out_PP;
+    103              GPIO_Init(GPIOA, &gpio_init_struct);
+    104              
+    105              /* SD CS */
+    106              gpio_init_struct.GPIO_Pin = GPIO_Pin_8;
+    107              gpio_init_struct.GPIO_Mode = GPIO_Mode_Out_PP;
+    108              GPIO_Init(GPIOA, &gpio_init_struct);
+    109          }
+    110          //---------------------------------------------------------------------------------------------
+    111          static void spi_flash_write_enable(void)
+    112          {
+    113              SPI_FLASH_CS_LOW();
+    114              spi_send_byte(SPI1, spi_flash_list[0].flash_cmd_wr_en);
+    115              SPI_FLASH_CS_HIGH();
+    116          }
+    117          static void spi_flash_wait_for_write_end(void)
+    118          {
+    119              uint8_t flash_status = 0;
+    120              SPI_FLASH_CS_LOW();
+    121              spi_send_byte(SPI1, spi_flash_list[0].flash_cmd_rd_sr);
+    122              do
+    123              {
+    124                  flash_status = spi_send_byte(SPI1, FLASH_DUMMY_BYTE);
+    125              }while ((flash_status & FLASH_WIP_FLAG) == SET); 
+    126              SPI_FLASH_CS_HIGH();
+    127          }
+    128          static void spi_flash_erase_one_sector(int32_t flash_addr)
+    129          {
+    130              spi_flash_write_enable();
+    131              SPI_FLASH_CS_LOW();
+    132              spi_send_byte(SPI1, spi_flash_list[0].flash_cmd_se);
+    133              spi_send_byte(SPI1, (flash_addr & 0xFF0000) >> 16);
+    134              spi_send_byte(SPI1, (flash_addr & 0xFF00) >> 8);
+    135              spi_send_byte(SPI1, flash_addr & 0xFF);
+    136              SPI_FLASH_CS_HIGH();
+    137              spi_flash_wait_for_write_end();
+    138          }
+    139          //---------------------------------------------------------------------------------------------
+    140          void spi_flash_erase_sector(int32_t flash_addr, int32_t num_byte_to_write)
+    141          {
+    142              int32_t num_of_sector = 0, num_of_single = 0, offset_in_sector = 0, num_remained_in_1st_sector = 0;
+    143              int32_t spi_flash_sector_size = spi_flash_list[0].flash_spi_sectorsize;
+    144              
+    145              offset_in_sector = flash_addr % spi_flash_sector_size;
+    146              num_remained_in_1st_sector = spi_flash_sector_size - offset_in_sector;
+    147              num_of_sector =  num_byte_to_write / spi_flash_sector_size;
+    148              num_of_single = num_byte_to_write % spi_flash_sector_size;
+    149          
+    150              if(offset_in_sector != 0)
+    151              {
+    152                  num_byte_to_write -= num_remained_in_1st_sector;
+    153                  if(num_byte_to_write > 0)
+    154                  {
+    155                      num_of_sector =  num_byte_to_write / spi_flash_sector_size;
+    156                      num_of_single = num_byte_to_write % spi_flash_sector_size;
+    157                  }
+    158                  else
+    159                  {
+    160                      num_of_sector =  0;
+    161                      num_of_single = 0;
+    162                  }
+    163                  spi_flash_erase_one_sector(flash_addr);
+    164                  flash_addr +=  num_remained_in_1st_sector;
+    165              }
+    166          
+    167              while(num_of_sector-- > 0)
+    168              {
+    169                  spi_flash_erase_one_sector(flash_addr);
+    170                  flash_addr +=  spi_flash_sector_size;
+    171              }
+    172              
+    173              if (num_of_single != 0)
+    174              {
+    175                  spi_flash_erase_one_sector(flash_addr);
+    176                  flash_addr +=  num_of_single;
+    177              }
+    178          }
+    179          //---------------------------------------------------------------------------------------------
+    180          static void spi_flash_write_page(int32_t write_addr, uint8_t *buffer, int32_t num_byte_to_write)
+    181          {
+    182              spi_flash_write_enable();
+    183              
+    184              SPI_FLASH_CS_LOW();
+    185              spi_send_byte(SPI1, spi_flash_list[0].flash_cmd_write);
+    186              spi_send_byte(SPI1, (write_addr & 0xFF0000) >> 16);
+    187              spi_send_byte(SPI1, (write_addr & 0xFF00) >> 8);
+    188              spi_send_byte(SPI1, write_addr & 0xFF);
+    189              while (num_byte_to_write--)
+    190              {
+    191                  spi_send_byte(SPI1, *buffer);
+    192                  buffer++;
+    193              }
+    194          
+    195              SPI_FLASH_CS_HIGH();
+    196              spi_flash_wait_for_write_end();
+    197          }
+    198          void spi_flash_write_buffer(int32_t write_addr, uint8_t *buffer, int32_t num_byte_to_write)
+    199          {
+    200              int32_t num_of_page = 0, num_of_single = 0, offset_in_page = 0, num_remained_in_1st_page = 0, temp = 0;
+    201              int32_t spi_flash_page_size = spi_flash_list[0].flash_spi_pagesize;
+    202              
+    203              offset_in_page = write_addr % spi_flash_page_size;
+    204              num_remained_in_1st_page = spi_flash_page_size - offset_in_page;
+    205              num_of_page =  num_byte_to_write / spi_flash_page_size;
+    206              num_of_single = num_byte_to_write % spi_flash_page_size;
+    207          
+    208              if(offset_in_page == 0) 
+    209              {
+    210                  if(num_of_page == 0) 
+    211                  {
+    212                      spi_flash_write_page(write_addr, buffer, num_byte_to_write);
+    213                  }
+    214                  else 
+    215                  {
+    216                      while(num_of_page--)
+    217                      {
+    218                          spi_flash_write_page(write_addr, buffer, spi_flash_page_size);
+    219                          write_addr +=  spi_flash_page_size;
+    220                          buffer += spi_flash_page_size;
+    221                      }
+    222          
+    223                      if (num_of_single != 0)
+    224                      {
+    225                          spi_flash_write_page(write_addr, buffer, num_of_single);
+    226                      }
+    227                  }
+    228              }
+    229              else 
+    230              {
+    231                  if(num_of_page == 0)
+    232                  {
+    233                      if(num_of_single > num_remained_in_1st_page)
+    234                      {
+    235                          temp = num_of_single - num_remained_in_1st_page;
+    236          
+    237                          spi_flash_write_page(write_addr, buffer, num_remained_in_1st_page);
+    238                          write_addr +=  num_remained_in_1st_page;
+    239                          buffer += num_remained_in_1st_page;
+    240          
+    241                          spi_flash_write_page(write_addr, buffer, temp);
+    242                      }
+    243                      else
+    244                      {
+    245                          spi_flash_write_page(write_addr, buffer, num_byte_to_write);
+    246                      }
+    247                  }
+    248                  else 
+    249                  {
+    250                      num_byte_to_write -= num_remained_in_1st_page;
+    251                      num_of_page =  num_byte_to_write / spi_flash_page_size;
+    252                      num_of_single = num_byte_to_write % spi_flash_page_size;
+    253          
+    254                      spi_flash_write_page(write_addr, buffer, num_remained_in_1st_page);
+    255                      write_addr +=  num_remained_in_1st_page;
+    256                      buffer += num_remained_in_1st_page;
+    257          
+    258                      while(num_of_page--)
+    259                      {
+    260                          spi_flash_write_page(write_addr, buffer, spi_flash_page_size);
+    261                          write_addr +=  spi_flash_page_size;
+    262                          buffer += spi_flash_page_size;
+    263                      }
+    264          
+    265                      if (num_of_single != 0)
+    266                      {
+    267                          spi_flash_write_page(write_addr, buffer, num_of_single);
+    268                      }
+    269                  }
+    270              }
+    271          }
+    272          //---------------------------------------------------------------------------------------------
+    273          void spi_flash_read_buffer(int32_t read_addr, uint8_t* buffer, int32_t num_byte_to_read)
+    274          {
+    275              SPI_FLASH_CS_LOW();
+    276              spi_send_byte(SPI1, spi_flash_list[0].flash_cmd_read);
+    277              spi_send_byte(SPI1, (read_addr & 0xFF0000) >> 16);
+    278              spi_send_byte(SPI1, (read_addr& 0xFF00) >> 8);
+    279              spi_send_byte(SPI1, read_addr & 0xFF);
+    280              while (num_byte_to_read--) 
+    281              {
+    282                  *buffer = spi_send_byte(SPI1, FLASH_DUMMY_BYTE);
+    283                  buffer++;
+    284              }
+    285              SPI_FLASH_CS_HIGH();
+    286          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   spi1_gpio_init
+         8   -> GPIO_Init
+         8   -> RCC_APB2PeriphClockCmd
+       8   spi1_init
+         8   -> GPIO_SetBits
+         8   -> SPI_Cmd
+         8   -> spi1_gpio_init
+         8   -> spi1_rcc_init
+         8   -> spi_param_init
+       8   spi1_rcc_init
+         8   -> RCC_APB2PeriphClockCmd
+       8   spi_flash_erase_one_sector
+         8   -> GPIO_ResetBits
+         8   -> GPIO_SetBits
+         8   -> spi_flash_wait_for_write_end
+         8   -> spi_flash_write_enable
+         8   -> spi_send_byte
+      24   spi_flash_erase_sector
+        24   -> spi_flash_erase_one_sector
+      16   spi_flash_read_buffer
+        16   -> GPIO_ResetBits
+        16   -> GPIO_SetBits
+        16   -> spi_send_byte
+       8   spi_flash_wait_for_write_end
+         8   -> GPIO_ResetBits
+         8   -> GPIO_SetBits
+         8   -> spi_send_byte
+      32   spi_flash_write_buffer
+        32   -> spi_flash_write_page
+       8   spi_flash_write_enable
+         8   -> GPIO_ResetBits
+         8   -> GPIO_SetBits
+         8   -> spi_send_byte
+      16   spi_flash_write_page
+        16   -> GPIO_ResetBits
+        16   -> GPIO_SetBits
+        16   -> spi_flash_wait_for_write_end
+        16   -> spi_flash_write_enable
+        16   -> spi_send_byte
+      32   spi_param_init
+        32   -> SPI_CalculateCRC
+        32   -> SPI_I2S_DeInit
+        32   -> SPI_Init
+      16   spi_send_byte
+        16   -> SPI_I2S_GetFlagStatus
+        16   -> SPI_I2S_ReceiveData
+        16   -> SPI_I2S_SendData
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable8
+       4  ??DataTable8_1
+       4  ??DataTable8_2
+     114  spi1_gpio_init
+      52  spi1_init
+      22  spi1_rcc_init
+      70  spi_flash_erase_one_sector
+     124  spi_flash_erase_sector
+      20  spi_flash_list
+      88  spi_flash_read_buffer
+      48  spi_flash_wait_for_write_end
+     252  spi_flash_write_buffer
+      30  spi_flash_write_enable
+      94  spi_flash_write_page
+      90  spi_param_init
+      52  spi_send_byte
+
+ 
+    20 bytes in section .data
+ 1 048 bytes in section .text
+ 
+ 1 048 bytes of CODE memory
+    20 bytes of DATA memory
+
+Errors: none
+Warnings: none

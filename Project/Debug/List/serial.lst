@@ -1,0 +1,300 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.1.53790/W32 for ARM     24/Mar/2016  09:09:08 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  E:\code\STM32\FreeRTOS\User\serial.c                     #
+#    Command line =  E:\code\STM32\FreeRTOS\User\serial.c -D VECT_TAB_FLASH   #
+#                    -D IAR_ARM_CM3 -lcN E:\code\STM32\FreeRTOS\Project\Debug #
+#                    \List\ --diag_suppress Pa082,pe191 -o                    #
+#                    E:\code\STM32\FreeRTOS\Project\Debug\Obj\ --no_cse       #
+#                    --no_unroll --no_inline --no_code_motion --no_tbaa       #
+#                    --no_clustering --no_scheduling --debug --endian=little  #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Full.h" -I                     #
+#                    E:\code\STM32\FreeRTOS\Project\.\ -I                     #
+#                    E:\code\STM32\FreeRTOS\Project\..\Library\inc\ -I        #
+#                    E:\code\STM32\FreeRTOS\Project\..\OS\include\ -I         #
+#                    E:\code\STM32\FreeRTOS\Project\..\OS\common\include\     #
+#                    -Ol --use_c++_inline                                     #
+#    List file    =  E:\code\STM32\FreeRTOS\Project\Debug\List\serial.lst     #
+#    Object file  =  E:\code\STM32\FreeRTOS\Project\Debug\Obj\serial.o        #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+E:\code\STM32\FreeRTOS\User\serial.c
+      1          #include <stdio.h>
+      2          #include <stdlib.h>
+      3          #include <string.h>
+      4          #include "stm32f10x.h"
+      5          #include "stm32f10x_lib.h"
+      6          #include "FreeRTOS.h"
+      7          #include "task.h"
+      8          #include "queue.h"
+      9          #include "serial.h"
+     10          
+     11          //---------------------------------------------------------------------------------------------
+     12          #define mainCHECK_TASK_PRIORITY				( tskIDLE_PRIORITY + 3 )
+     13          #define mainCHECK_TASK_STACK_SIZE			( configMINIMAL_STACK_SIZE + 50 )
+     14          //---------------------------------------------------------------------------------------------
+     15          static QueueHandle_t rxchars_queue;
+     16          static QueueHandle_t txchars_queue;
+     17          //---------------------------------------------------------------------------------------------
+     18          static void setup_debug_port_peri(void)
+     19          {
+     20              USART_InitTypeDef USART_InitStructure;
+     21              GPIO_InitTypeDef GPIO_InitStructure;
+     22          
+     23              /* Create the queues used to hold Rx/Tx characters. */
+     24              rxchars_queue = xQueueCreate(100, (unsigned portBASE_TYPE) sizeof(signed char));
+     25              txchars_queue = xQueueCreate(100, (unsigned portBASE_TYPE) sizeof(signed char));
+     26          
+     27              //assert(rxchars_queue && txchars_queue);
+     28          
+     29              /* Enable USART1 clock */
+     30              RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA, ENABLE);
+     31          
+     32              /* Configure USART1 Rx (PA10) as input floating */
+     33              GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+     34              GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+     35              GPIO_Init(GPIOA, &GPIO_InitStructure);
+     36          
+     37              /* Configure USART1 Tx (PA9) as alternate function push-pull */
+     38              GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+     39              GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+     40              GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+     41              GPIO_Init(GPIOA, &GPIO_InitStructure);
+     42          
+     43              USART_InitStructure.USART_BaudRate = 115200;
+     44              USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+     45              USART_InitStructure.USART_StopBits = USART_StopBits_1;
+     46              USART_InitStructure.USART_Parity = USART_Parity_No;
+     47              USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+     48              USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+     49          
+     50              USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+     51              USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
+     52          
+     53              /* Configure the USARTx */
+     54              USART_Init(USART1, &USART_InitStructure);
+     55          
+     56              NVIC_EnableIRQ(USART1_IRQn);
+     57          
+     58              /* Enable the USARTx */
+     59              USART_Cmd(USART1, ENABLE);
+     60          }
+     61          //---------------------------------------------------------------------------------------------
+     62          int serial_get_char(int port, char *rxchar, TickType_t block_ticks)
+     63          {
+     64              return xQueueReceive(rxchars_queue, rxchar, block_ticks);
+     65          }
+     66          //---------------------------------------------------------------------------------------------
+     67          void serial_put_char(int port, char txchar, TickType_t block_ticks)
+     68          {
+     69              if (xQueueSend(txchars_queue, &txchar, block_ticks))
+     70              {
+     71                  USART_ITConfig(USART1, USART_IT_TXE, ENABLE);
+     72              }
+     73          }
+     74          int fputc(int ch, FILE * f)
+     75          {
+     76              serial_put_char(0, (uint8_t) ch, 0);
+     77              return ch;
+     78          }
+     79          //---------------------------------------------------------------------------------------------
+     80          void debug_port_interrupt_handler(void)
+     81          {
+     82              portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+     83              char c;
+     84          
+     85              if (USART_GetITStatus(USART1, USART_IT_TXE) == SET)
+     86              {
+     87                  if (xQueueReceiveFromISR(txchars_queue, &c, &xHigherPriorityTaskWoken))
+     88                  {
+     89                      USART_SendData(USART1, c);
+     90                  }
+     91                  else
+     92                  {
+     93                      USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
+     94                  }
+     95              }
+     96          
+     97              if (USART_GetITStatus(USART1, USART_IT_RXNE))
+     98              {
+     99                  c = USART_ReceiveData(USART1);
+    100                  xQueueSendFromISR(rxchars_queue, &c, &xHigherPriorityTaskWoken);
+    101              }
+    102          
+    103              portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+    104          }
+    105          //---------------------------------------------------------------------------------------------
+    106          #define UIF_MAX_ARGS    (10)
+    107          #define UIF_MAX_LINE    (0x40)
+    108          //---------------------------------------------------------------------------------------------
+    109          static const char PROMPT[] = "dBUG> ";
+    110          
+    111          static int console_en = 0;
+    112          //---------------------------------------------------------------------------------------------
+    113          struct cmd_arg
+    114          {
+    115              int len;
+    116              char cmdline[UIF_MAX_LINE];
+    117          };
+    118          static struct cmd_arg cmd_args;
+    119          //---------------------------------------------------------------------------------------------
+    120          static int make_argv(char *cmdline, char *argv[])
+    121          {
+    122              int argc, i, in_text;
+    123          
+    124              argc = 0;
+    125              i = 0;
+    126              in_text = 0;
+    127              while (cmdline[i] != '\0')
+    128              {
+    129                  if (((cmdline[i] == ' ') || (cmdline[i] == '\t')))
+    130                  {
+    131                      if (in_text)
+    132                      {
+    133                          cmdline[i] = '\0';
+    134                          in_text = 0;
+    135                      }
+    136                  }
+    137                  else
+    138                  {
+    139                      if (!in_text)
+    140                      {
+    141                          in_text = 1;
+    142                          if (argc < UIF_MAX_ARGS)
+    143                          {
+    144                              if (argv != NULL)
+    145                                  argv[argc] = &cmdline[i];
+    146                              argc++;
+    147                          }
+    148                          else
+    149                              break;
+    150                      }
+    151                  }
+    152                  i++;
+    153              }
+    154              if (argv != NULL)
+    155                  argv[argc] = NULL;
+    156              return (argc);
+    157          }
+    158          
+    159          //---------------------------------------------------------------------------------------------
+    160          void cmd_rx_hook(char ch)
+    161          {
+    162              if ((ch == 0x08 || ch == 0x7F) && cmd_args.len > 0)
+    163              {
+    164                  cmd_args.len--;
+    165                  serial_put_char(0, 0x08, 0); /* backspace */
+    166                  serial_put_char(0, ' ', 0);
+    167                  serial_put_char(0, 0x08, 0); /* backspace */
+    168              }
+    169              else
+    170              {
+    171                  if (ch > 0x1f && ch < 0x80)
+    172                  {
+    173                      if (cmd_args.len < sizeof(cmd_args.cmdline) - 1)
+    174                      {
+    175                          cmd_args.cmdline[cmd_args.len++] = ch;
+    176                          serial_put_char(0, (char) ch, 0);
+    177                      }
+    178                  }
+    179                  else if (ch == 0x0D || ch == 0x0A)
+    180                  {
+    181                      cmd_args.cmdline[cmd_args.len++] = '\0';
+    182                      serial_put_char(0, 0x0D, 0);
+    183                      serial_put_char(0, 0x0A, 0);
+    184                      //set_task(TASK_CMD);
+    185                  }
+    186              }
+    187          }
+    188          //---------------------------------------------------------------------------------------------
+    189          void debug_port_task_handler(void *pvParameters)
+    190          {
+    191              char c;
+    192          
+    193              setup_debug_port_peri();
+    194          
+    195              for (;;)
+    196              {
+    197                  while (xQueueReceive(rxchars_queue, &c, portMAX_DELAY) != pdPASS);
+    198          
+    199                  cmd_rx_hook(c);
+    200              }
+    201          }
+    202          //---------------------------------------------------------------------------------------------
+    203          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        0  NVIC_EnableIRQ
+        8  cmd_rx_hook
+              8 -> serial_put_char
+       16  debug_port_interrupt_handler
+             16 -> USART_GetITStatus
+             16 -> USART_ITConfig
+             16 -> USART_ReceiveData
+             16 -> USART_SendData
+             16 -> xQueueGenericSendFromISR
+             16 -> xQueueReceiveFromISR
+        8  debug_port_task_handler
+              8 -> cmd_rx_hook
+              8 -> setup_debug_port_peri
+              8 -> xQueueGenericReceive
+        8  fputc
+              8 -> serial_put_char
+        8  serial_get_char
+              8 -> xQueueGenericReceive
+        8  serial_put_char
+              8 -> USART_ITConfig
+              8 -> xQueueGenericSend
+       32  setup_debug_port_peri
+             32 -> GPIO_Init
+             32 -> NVIC_EnableIRQ
+             32 -> RCC_APB2PeriphClockCmd
+             32 -> USART_Cmd
+             32 -> USART_ITConfig
+             32 -> USART_Init
+             32 -> xQueueGenericCreate
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable6
+       4  ??DataTable6_1
+       4  ??DataTable6_2
+       4  ??DataTable6_3
+       4  ??DataTable6_4
+       4  ??DataTable6_5
+       4  ??DataTable6_6
+      22  NVIC_EnableIRQ
+      68  cmd_args
+     172  cmd_rx_hook
+     126  debug_port_interrupt_handler
+      36  debug_port_task_handler
+      20  fputc
+       4  rxchars_queue
+      14  serial_get_char
+      32  serial_put_char
+     190  setup_debug_port_peri
+       4  txchars_queue
+
+ 
+  76 bytes in section .bss
+ 640 bytes in section .text
+ 
+ 640 bytes of CODE memory
+  76 bytes of DATA memory
+
+Errors: none
+Warnings: 3

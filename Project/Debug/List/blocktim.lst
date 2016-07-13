@@ -1,0 +1,679 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.1.53790/W32 for ARM     23/Mar/2016  10:37:14 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  E:\code\STM32\FreeRTOS\Common\Minimal\blocktim.c         #
+#    Command line =  E:\code\STM32\FreeRTOS\Common\Minimal\blocktim.c -D      #
+#                    VECT_TAB_FLASH -D IAR_ARM_CM3 -lcN                       #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\Debug\List\             #
+#                    --diag_suppress Pa082,pe191 -o                           #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\Debug\Obj\ --no_cse     #
+#                    --no_unroll --no_inline --no_code_motion --no_tbaa       #
+#                    --no_clustering --no_scheduling --debug --endian=little  #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Full.h" -I                     #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\.\ -I                   #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\STM32F10xFWLib\inc\ -I  #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\..\..\Source\include\   #
+#                    -I E:\code\STM32\FreeRTOS\RTOS_test\..\common\include\   #
+#                    -Ol --use_c++_inline --require_prototypes                #
+#    List file    =  E:\code\STM32\FreeRTOS\RTOS_test\Debug\List\blocktim.lst #
+#    Object file  =  E:\code\STM32\FreeRTOS\RTOS_test\Debug\Obj\blocktim.o    #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+E:\code\STM32\FreeRTOS\Common\Minimal\blocktim.c
+      1          /*
+      2              FreeRTOS V9.0.0rc1 - Copyright (C) 2016 Real Time Engineers Ltd.
+      3              All rights reserved
+      4          
+      5              VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
+      6          
+      7              This file is part of the FreeRTOS distribution.
+      8          
+      9              FreeRTOS is free software; you can redistribute it and/or modify it under
+     10              the terms of the GNU General Public License (version 2) as published by the
+     11              Free Software Foundation >>>> AND MODIFIED BY <<<< the FreeRTOS exception.
+     12          
+     13              ***************************************************************************
+     14              >>!   NOTE: The modification to the GPL is included to allow you to     !<<
+     15              >>!   distribute a combined work that includes FreeRTOS without being   !<<
+     16              >>!   obliged to provide the source code for proprietary components     !<<
+     17              >>!   outside of the FreeRTOS kernel.                                   !<<
+     18              ***************************************************************************
+     19          
+     20              FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
+     21              WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+     22              FOR A PARTICULAR PURPOSE.  Full license text is available on the following
+     23              link: http://www.freertos.org/a00114.html
+     24          
+     25              ***************************************************************************
+     26               *                                                                       *
+     27               *    FreeRTOS provides completely free yet professionally developed,    *
+     28               *    robust, strictly quality controlled, supported, and cross          *
+     29               *    platform software that is more than just the market leader, it     *
+     30               *    is the industry's de facto standard.                               *
+     31               *                                                                       *
+     32               *    Help yourself get started quickly while simultaneously helping     *
+     33               *    to support the FreeRTOS project by purchasing a FreeRTOS           *
+     34               *    tutorial book, reference manual, or both:                          *
+     35               *    http://www.FreeRTOS.org/Documentation                              *
+     36               *                                                                       *
+     37              ***************************************************************************
+     38          
+     39              http://www.FreeRTOS.org/FAQHelp.html - Having a problem?  Start by reading
+     40              the FAQ page "My application does not run, what could be wrong?".  Have you
+     41              defined configASSERT()?
+     42          
+     43              http://www.FreeRTOS.org/support - In return for receiving this top quality
+     44              embedded software for free we request you assist our global community by
+     45              participating in the support forum.
+     46          
+     47              http://www.FreeRTOS.org/training - Investing in training allows your team to
+     48              be as productive as possible as early as possible.  Now you can receive
+     49              FreeRTOS training directly from Richard Barry, CEO of Real Time Engineers
+     50              Ltd, and the world's leading authority on the world's leading RTOS.
+     51          
+     52              http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
+     53              including FreeRTOS+Trace - an indispensable productivity tool, a DOS
+     54              compatible FAT file system, and our tiny thread aware UDP/IP stack.
+     55          
+     56              http://www.FreeRTOS.org/labs - Where new FreeRTOS products go to incubate.
+     57              Come and try FreeRTOS+TCP, our new open source TCP/IP stack for FreeRTOS.
+     58          
+     59              http://www.OpenRTOS.com - Real Time Engineers ltd. license FreeRTOS to High
+     60              Integrity Systems ltd. to sell under the OpenRTOS brand.  Low cost OpenRTOS
+     61              licenses offer ticketed support, indemnification and commercial middleware.
+     62          
+     63              http://www.SafeRTOS.com - High Integrity Systems also provide a safety
+     64              engineered and independently SIL3 certified version for use in safety and
+     65              mission critical applications that require provable dependability.
+     66          
+     67              1 tab == 4 spaces!
+     68          */
+     69          
+     70          /*
+     71           * This file contains some test scenarios that ensure tasks do not exit queue
+     72           * send or receive functions prematurely.  A description of the tests is
+     73           * included within the code.
+     74           */
+     75          
+     76          /* Kernel includes. */
+     77          #include "FreeRTOS.h"
+     78          #include "task.h"
+     79          #include "queue.h"
+     80          
+     81          /* Demo includes. */
+     82          #include "blocktim.h"
+     83          
+     84          /* Task priorities.  Allow these to be overridden. */
+     85          #ifndef bktPRIMARY_PRIORITY
+     86          #define bktPRIMARY_PRIORITY		( configMAX_PRIORITIES - 3 )
+     87          #endif
+     88          
+     89          #ifndef bktSECONDARY_PRIORITY
+     90          #define bktSECONDARY_PRIORITY	( configMAX_PRIORITIES - 4 )
+     91          #endif
+     92          
+     93          /* Task behaviour. */
+     94          #define bktQUEUE_LENGTH				( 5 )
+     95          #define bktSHORT_WAIT				pdMS_TO_TICKS( ( TickType_t ) 20 )
+     96          #define bktPRIMARY_BLOCK_TIME		( 10 )
+     97          #define bktALLOWABLE_MARGIN			( 15 )
+     98          #define bktTIME_TO_BLOCK			( 175 )
+     99          #define bktDONT_BLOCK				( ( TickType_t ) 0 )
+    100          #define bktRUN_INDICATOR			( ( UBaseType_t ) 0x55 )
+    101          
+    102          /*-----------------------------------------------------------*/
+    103          
+    104          /*
+    105           * The two test tasks.  Their behaviour is commented within the functions.
+    106           */
+    107          static void vPrimaryBlockTimeTestTask(void *pvParameters);
+    108          static void vSecondaryBlockTimeTestTask(void *pvParameters);
+    109          
+    110          /*
+    111           * Very basic tests to verify the block times are as expected.
+    112           */
+    113          static void prvBasicDelayTests(void);
+    114          
+    115          /*-----------------------------------------------------------*/
+    116          
+    117          /* The queue on which the tasks block. */
+    118          static QueueHandle_t xTestQueue;
+    119          
+    120          /* Handle to the secondary task is required by the primary task for calls
+    121          to vTaskSuspend/Resume(). */
+    122          static TaskHandle_t xSecondary;
+    123          
+    124          /* Used to ensure that tasks are still executing without error. */
+    125          static volatile BaseType_t xPrimaryCycles = 0, xSecondaryCycles = 0;
+    126          static volatile BaseType_t xErrorOccurred = pdFALSE;
+    127          
+    128          /* Provides a simple mechanism for the primary task to know when the
+    129          secondary task has executed. */
+    130          static volatile UBaseType_t xRunIndicator;
+    131          
+    132          /*-----------------------------------------------------------*/
+    133          
+    134          void vCreateBlockTimeTasks(void)
+    135          {
+    136              /* Create the queue on which the two tasks block. */
+    137              xTestQueue = xQueueCreate(bktQUEUE_LENGTH, sizeof(BaseType_t));
+    138          
+    139              /* vQueueAddToRegistry() adds the queue to the queue registry, if one is
+    140                 in use.  The queue registry is provided as a means for kernel aware
+    141                 debuggers to locate queues and has no purpose if a kernel aware debugger
+    142                 is not being used.  The call to vQueueAddToRegistry() will be removed
+    143                 by the pre-processor if configQUEUE_REGISTRY_SIZE is not defined or is
+    144                 defined to be less than 1. */
+    145              vQueueAddToRegistry(xTestQueue, "Block_Time_Queue");
+    146          
+    147              /* Create the two test tasks. */
+    148              xTaskCreate(vPrimaryBlockTimeTestTask, "BTest1", configMINIMAL_STACK_SIZE, NULL, bktPRIMARY_PRIORITY, NULL);
+    149              xTaskCreate(vSecondaryBlockTimeTestTask, "BTest2", configMINIMAL_STACK_SIZE, NULL, bktSECONDARY_PRIORITY,
+    150                          &xSecondary);
+    151          }
+    152          
+    153          /*-----------------------------------------------------------*/
+    154          
+    155          static void vPrimaryBlockTimeTestTask(void *pvParameters)
+    156          {
+    157              BaseType_t xItem, xData;
+    158              TickType_t xTimeWhenBlocking;
+    159              TickType_t xTimeToBlock, xBlockedTime;
+    160          
+    161              (void) pvParameters;
+    162          
+    163              for (;;)
+    164              {
+    165                  /*********************************************************************
+    166          		Test 0
+    167          
+    168          		Basic vTaskDelay() and vTaskDelayUntil() tests. */
+    169                  prvBasicDelayTests();
+    170          
+    171          
+    172                  /*********************************************************************
+    173          		Test 1
+    174          
+    175          		Simple block time wakeup test on queue receives. */
+    176                  for (xItem = 0; xItem < bktQUEUE_LENGTH; xItem++)
+    177                  {
+    178                      /* The queue is empty. Attempt to read from the queue using a block
+    179                         time.  When we wake, ensure the delta in time is as expected. */
+    180                      xTimeToBlock = (TickType_t) (bktPRIMARY_BLOCK_TIME << xItem);
+    181          
+    182                      xTimeWhenBlocking = xTaskGetTickCount();
+    183          
+    184                      /* We should unblock after xTimeToBlock having not received
+    185                         anything on the queue. */
+    186                      if (xQueueReceive(xTestQueue, &xData, xTimeToBlock) != errQUEUE_EMPTY)
+    187                      {
+    188                          xErrorOccurred = pdTRUE;
+    189                      }
+    190          
+    191                      /* How long were we blocked for? */
+    192                      xBlockedTime = xTaskGetTickCount() - xTimeWhenBlocking;
+    193          
+    194                      if (xBlockedTime < xTimeToBlock)
+    195                      {
+    196                          /* Should not have blocked for less than we requested. */
+    197                          xErrorOccurred = pdTRUE;
+    198                      }
+    199          
+    200                      if (xBlockedTime > (xTimeToBlock + bktALLOWABLE_MARGIN))
+    201                      {
+    202                          /* Should not have blocked for longer than we requested,
+    203                             although we would not necessarily run as soon as we were
+    204                             unblocked so a margin is allowed. */
+    205                          xErrorOccurred = pdTRUE;
+    206                      }
+    207                  }
+    208          
+    209                  /*********************************************************************
+    210          		Test 2
+    211          
+    212          		Simple block time wakeup test on queue sends.
+    213          
+    214          		First fill the queue.  It should be empty so all sends should pass. */
+    215                  for (xItem = 0; xItem < bktQUEUE_LENGTH; xItem++)
+    216                  {
+    217                      if (xQueueSend(xTestQueue, &xItem, bktDONT_BLOCK) != pdPASS)
+    218                      {
+    219                          xErrorOccurred = pdTRUE;
+    220                      }
+    221          
+    222          #if configUSE_PREEMPTION == 0
+    223                      taskYIELD();
+    224          #endif
+    225                  }
+    226          
+    227                  for (xItem = 0; xItem < bktQUEUE_LENGTH; xItem++)
+    228                  {
+    229                      /* The queue is full. Attempt to write to the queue using a block
+    230                         time.  When we wake, ensure the delta in time is as expected. */
+    231                      xTimeToBlock = (TickType_t) (bktPRIMARY_BLOCK_TIME << xItem);
+    232          
+    233                      xTimeWhenBlocking = xTaskGetTickCount();
+    234          
+    235                      /* We should unblock after xTimeToBlock having not received
+    236                         anything on the queue. */
+    237                      if (xQueueSend(xTestQueue, &xItem, xTimeToBlock) != errQUEUE_FULL)
+    238                      {
+    239                          xErrorOccurred = pdTRUE;
+    240                      }
+    241          
+    242                      /* How long were we blocked for? */
+    243                      xBlockedTime = xTaskGetTickCount() - xTimeWhenBlocking;
+    244          
+    245                      if (xBlockedTime < xTimeToBlock)
+    246                      {
+    247                          /* Should not have blocked for less than we requested. */
+    248                          xErrorOccurred = pdTRUE;
+    249                      }
+    250          
+    251                      if (xBlockedTime > (xTimeToBlock + bktALLOWABLE_MARGIN))
+    252                      {
+    253                          /* Should not have blocked for longer than we requested,
+    254                             although we would not necessarily run as soon as we were
+    255                             unblocked so a margin is allowed. */
+    256                          xErrorOccurred = pdTRUE;
+    257                      }
+    258                  }
+    259          
+    260                  /*********************************************************************
+    261          		Test 3
+    262          
+    263          		Wake the other task, it will block attempting to post to the queue.
+    264          		When we read from the queue the other task will wake, but before it
+    265          		can run we will post to the queue again.  When the other task runs it
+    266          		will find the queue still full, even though it was woken.  It should
+    267          		recognise that its block time has not expired and return to block for
+    268          		the remains of its block time.
+    269          
+    270          		Wake the other task so it blocks attempting to post to the already
+    271          		full queue. */
+    272                  xRunIndicator = 0;
+    273                  vTaskResume(xSecondary);
+    274          
+    275                  /* We need to wait a little to ensure the other task executes. */
+    276                  while (xRunIndicator != bktRUN_INDICATOR)
+    277                  {
+    278                      /* The other task has not yet executed. */
+    279                      vTaskDelay(bktSHORT_WAIT);
+    280                  }
+    281                  /* Make sure the other task is blocked on the queue. */
+    282                  vTaskDelay(bktSHORT_WAIT);
+    283                  xRunIndicator = 0;
+    284          
+    285                  for (xItem = 0; xItem < bktQUEUE_LENGTH; xItem++)
+    286                  {
+    287                      /* Now when we make space on the queue the other task should wake
+    288                         but not execute as this task has higher priority. */
+    289                      if (xQueueReceive(xTestQueue, &xData, bktDONT_BLOCK) != pdPASS)
+    290                      {
+    291                          xErrorOccurred = pdTRUE;
+    292                      }
+    293          
+    294                      /* Now fill the queue again before the other task gets a chance to
+    295                         execute.  If the other task had executed we would find the queue
+    296                         full ourselves, and the other task have set xRunIndicator. */
+    297                      if (xQueueSend(xTestQueue, &xItem, bktDONT_BLOCK) != pdPASS)
+    298                      {
+    299                          xErrorOccurred = pdTRUE;
+    300                      }
+    301          
+    302                      if (xRunIndicator == bktRUN_INDICATOR)
+    303                      {
+    304                          /* The other task should not have executed. */
+    305                          xErrorOccurred = pdTRUE;
+    306                      }
+    307          
+    308                      /* Raise the priority of the other task so it executes and blocks
+    309                         on the queue again. */
+    310                      vTaskPrioritySet(xSecondary, bktPRIMARY_PRIORITY + 2);
+    311          
+    312                      /* The other task should now have re-blocked without exiting the
+    313                         queue function. */
+    314                      if (xRunIndicator == bktRUN_INDICATOR)
+    315                      {
+    316                          /* The other task should not have executed outside of the
+    317                             queue function. */
+    318                          xErrorOccurred = pdTRUE;
+    319                      }
+    320          
+    321                      /* Set the priority back down. */
+    322                      vTaskPrioritySet(xSecondary, bktSECONDARY_PRIORITY);
+    323                  }
+    324          
+    325                  /* Let the other task timeout.  When it unblockes it will check that it
+    326                     unblocked at the correct time, then suspend itself. */
+    327                  while (xRunIndicator != bktRUN_INDICATOR)
+    328                  {
+    329                      vTaskDelay(bktSHORT_WAIT);
+    330                  }
+    331                  vTaskDelay(bktSHORT_WAIT);
+    332                  xRunIndicator = 0;
+    333          
+    334          
+    335                  /*********************************************************************
+    336          		Test 4
+    337          
+    338          		As per test 3 - but with the send and receive the other way around.
+    339          		The other task blocks attempting to read from the queue.
+    340          
+    341          		Empty the queue.  We should find that it is full. */
+    342                  for (xItem = 0; xItem < bktQUEUE_LENGTH; xItem++)
+    343                  {
+    344                      if (xQueueReceive(xTestQueue, &xData, bktDONT_BLOCK) != pdPASS)
+    345                      {
+    346                          xErrorOccurred = pdTRUE;
+    347                      }
+    348                  }
+    349          
+    350                  /* Wake the other task so it blocks attempting to read from  the
+    351                     already  empty queue. */
+    352                  vTaskResume(xSecondary);
+    353          
+    354                  /* We need to wait a little to ensure the other task executes. */
+    355                  while (xRunIndicator != bktRUN_INDICATOR)
+    356                  {
+    357                      vTaskDelay(bktSHORT_WAIT);
+    358                  }
+    359                  vTaskDelay(bktSHORT_WAIT);
+    360                  xRunIndicator = 0;
+    361          
+    362                  for (xItem = 0; xItem < bktQUEUE_LENGTH; xItem++)
+    363                  {
+    364                      /* Now when we place an item on the queue the other task should
+    365                         wake but not execute as this task has higher priority. */
+    366                      if (xQueueSend(xTestQueue, &xItem, bktDONT_BLOCK) != pdPASS)
+    367                      {
+    368                          xErrorOccurred = pdTRUE;
+    369                      }
+    370          
+    371                      /* Now empty the queue again before the other task gets a chance to
+    372                         execute.  If the other task had executed we would find the queue
+    373                         empty ourselves, and the other task would be suspended. */
+    374                      if (xQueueReceive(xTestQueue, &xData, bktDONT_BLOCK) != pdPASS)
+    375                      {
+    376                          xErrorOccurred = pdTRUE;
+    377                      }
+    378          
+    379                      if (xRunIndicator == bktRUN_INDICATOR)
+    380                      {
+    381                          /* The other task should not have executed. */
+    382                          xErrorOccurred = pdTRUE;
+    383                      }
+    384          
+    385                      /* Raise the priority of the other task so it executes and blocks
+    386                         on the queue again. */
+    387                      vTaskPrioritySet(xSecondary, bktPRIMARY_PRIORITY + 2);
+    388          
+    389                      /* The other task should now have re-blocked without exiting the
+    390                         queue function. */
+    391                      if (xRunIndicator == bktRUN_INDICATOR)
+    392                      {
+    393                          /* The other task should not have executed outside of the
+    394                             queue function. */
+    395                          xErrorOccurred = pdTRUE;
+    396                      }
+    397                      vTaskPrioritySet(xSecondary, bktSECONDARY_PRIORITY);
+    398                  }
+    399          
+    400                  /* Let the other task timeout.  When it unblockes it will check that it
+    401                     unblocked at the correct time, then suspend itself. */
+    402                  while (xRunIndicator != bktRUN_INDICATOR)
+    403                  {
+    404                      vTaskDelay(bktSHORT_WAIT);
+    405                  }
+    406                  vTaskDelay(bktSHORT_WAIT);
+    407          
+    408                  xPrimaryCycles++;
+    409              }
+    410          }
+    411          
+    412          /*-----------------------------------------------------------*/
+    413          
+    414          static void vSecondaryBlockTimeTestTask(void *pvParameters)
+    415          {
+    416              TickType_t xTimeWhenBlocking, xBlockedTime;
+    417              BaseType_t xData;
+    418          
+    419              (void) pvParameters;
+    420          
+    421              for (;;)
+    422              {
+    423                  /*********************************************************************
+    424          		Test 0, 1 and 2
+    425          
+    426          		This task does not participate in these tests. */
+    427                  vTaskSuspend(NULL);
+    428          
+    429                  /*********************************************************************
+    430          		Test 3
+    431          
+    432          		The first thing we do is attempt to read from the queue.  It should be
+    433          		full so we block.  Note the time before we block so we can check the
+    434          		wake time is as per that expected. */
+    435                  xTimeWhenBlocking = xTaskGetTickCount();
+    436          
+    437                  /* We should unblock after bktTIME_TO_BLOCK having not sent anything to
+    438                     the queue. */
+    439                  xData = 0;
+    440                  xRunIndicator = bktRUN_INDICATOR;
+    441                  if (xQueueSend(xTestQueue, &xData, bktTIME_TO_BLOCK) != errQUEUE_FULL)
+    442                  {
+    443                      xErrorOccurred = pdTRUE;
+    444                  }
+    445          
+    446                  /* How long were we inside the send function? */
+    447                  xBlockedTime = xTaskGetTickCount() - xTimeWhenBlocking;
+    448          
+    449                  /* We should not have blocked for less time than bktTIME_TO_BLOCK. */
+    450                  if (xBlockedTime < bktTIME_TO_BLOCK)
+    451                  {
+    452                      xErrorOccurred = pdTRUE;
+    453                  }
+    454          
+    455                  /* We should of not blocked for much longer than bktALLOWABLE_MARGIN
+    456                     either.  A margin is permitted as we would not necessarily run as
+    457                     soon as we unblocked. */
+    458                  if (xBlockedTime > (bktTIME_TO_BLOCK + bktALLOWABLE_MARGIN))
+    459                  {
+    460                      xErrorOccurred = pdTRUE;
+    461                  }
+    462          
+    463                  /* Suspend ready for test 3. */
+    464                  xRunIndicator = bktRUN_INDICATOR;
+    465                  vTaskSuspend(NULL);
+    466          
+    467                  /*********************************************************************
+    468                  Test 4
+    469          
+    470          		As per test three, but with the send and receive reversed. */
+    471                  xTimeWhenBlocking = xTaskGetTickCount();
+    472          
+    473                  /* We should unblock after bktTIME_TO_BLOCK having not received
+    474                     anything on the queue. */
+    475                  xRunIndicator = bktRUN_INDICATOR;
+    476                  if (xQueueReceive(xTestQueue, &xData, bktTIME_TO_BLOCK) != errQUEUE_EMPTY)
+    477                  {
+    478                      xErrorOccurred = pdTRUE;
+    479                  }
+    480          
+    481                  xBlockedTime = xTaskGetTickCount() - xTimeWhenBlocking;
+    482          
+    483                  /* We should not have blocked for less time than bktTIME_TO_BLOCK. */
+    484                  if (xBlockedTime < bktTIME_TO_BLOCK)
+    485                  {
+    486                      xErrorOccurred = pdTRUE;
+    487                  }
+    488          
+    489                  /* We should of not blocked for much longer than bktALLOWABLE_MARGIN
+    490                     either.  A margin is permitted as we would not necessarily run as soon
+    491                     as we unblocked. */
+    492                  if (xBlockedTime > (bktTIME_TO_BLOCK + bktALLOWABLE_MARGIN))
+    493                  {
+    494                      xErrorOccurred = pdTRUE;
+    495                  }
+    496          
+    497                  xRunIndicator = bktRUN_INDICATOR;
+    498          
+    499                  xSecondaryCycles++;
+    500              }
+    501          }
+    502          
+    503          /*-----------------------------------------------------------*/
+    504          
+    505          static void prvBasicDelayTests(void)
+    506          {
+    507              TickType_t xPreTime, xPostTime, x, xLastUnblockTime, xExpectedUnblockTime;
+    508              const TickType_t xPeriod = 75, xCycles = 5, xAllowableMargin = (bktALLOWABLE_MARGIN >> 1);
+    509          
+    510              /* Temporarily increase priority so the timing is more accurate, but not so
+    511                 high as to disrupt the timer tests. */
+    512              //vTaskPrioritySet( NULL, configTIMER_TASK_PRIORITY - 1 );
+    513              vTaskPrioritySet(NULL, 10 - 1);
+    514          
+    515              /* Crude check to too that vTaskDelay() blocks for the expected period. */
+    516              xPreTime = xTaskGetTickCount();
+    517              vTaskDelay(bktTIME_TO_BLOCK);
+    518              xPostTime = xTaskGetTickCount();
+    519          
+    520              /* The priority is higher, so the allowable margin is halved when compared
+    521                 to the other tests in this file. */
+    522              if ((xPostTime - xPreTime) > (bktTIME_TO_BLOCK + xAllowableMargin))
+    523              {
+    524                  xErrorOccurred = pdTRUE;
+    525              }
+    526          
+    527              /* Now crude tests to check the vTaskDelayUntil() functionality. */
+    528              xPostTime = xTaskGetTickCount();
+    529              xLastUnblockTime = xPostTime;
+    530          
+    531              for (x = 0; x < xCycles; x++)
+    532              {
+    533                  /* Calculate the next expected unblock time from the time taken before
+    534                     this loop was entered. */
+    535                  xExpectedUnblockTime = xPostTime + (x * xPeriod);
+    536          
+    537                  vTaskDelayUntil(&xLastUnblockTime, xPeriod);
+    538          
+    539                  if ((xTaskGetTickCount() - xExpectedUnblockTime) > (bktTIME_TO_BLOCK + xAllowableMargin))
+    540                  {
+    541                      xErrorOccurred = pdTRUE;
+    542                  }
+    543          
+    544                  xPrimaryCycles++;
+    545              }
+    546          
+    547              /* Reset to the original task priority ready for the other tests. */
+    548              vTaskPrioritySet(NULL, bktPRIMARY_PRIORITY);
+    549          }
+    550          
+    551          /*-----------------------------------------------------------*/
+    552          
+    553          BaseType_t xAreBlockTimeTestTasksStillRunning(void)
+    554          {
+    555              static BaseType_t xLastPrimaryCycleCount = 0, xLastSecondaryCycleCount = 0;
+    556              BaseType_t xReturn = pdPASS;
+    557          
+    558              /* Have both tasks performed at least one cycle since this function was
+    559                 last called? */
+    560              if (xPrimaryCycles == xLastPrimaryCycleCount)
+    561              {
+    562                  xReturn = pdFAIL;
+    563              }
+    564          
+    565              if (xSecondaryCycles == xLastSecondaryCycleCount)
+    566              {
+    567                  xReturn = pdFAIL;
+    568              }
+    569          
+    570              if (xErrorOccurred == pdTRUE)
+    571              {
+    572                  xReturn = pdFAIL;
+    573              }
+    574          
+    575              xLastSecondaryCycleCount = xSecondaryCycles;
+    576              xLastPrimaryCycleCount = xPrimaryCycles;
+    577          
+    578              return xReturn;
+    579          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       32  prvBasicDelayTests
+             32 -> vTaskDelay
+             32 -> vTaskDelayUntil
+             32 -> vTaskPrioritySet
+             32 -> xTaskGetTickCount
+       24  vCreateBlockTimeTasks
+             24 -> xQueueGenericCreate
+             24 -> xTaskGenericCreate
+        8  vPrimaryBlockTimeTestTask
+              8 -> prvBasicDelayTests
+              8 -> vTaskDelay
+              8 -> vTaskPrioritySet
+              8 -> vTaskResume
+              8 -> xQueueGenericReceive
+              8 -> xQueueGenericSend
+              8 -> xTaskGetTickCount
+        8  vSecondaryBlockTimeTestTask
+              8 -> vTaskSuspend
+              8 -> xQueueGenericReceive
+              8 -> xQueueGenericSend
+              8 -> xTaskGetTickCount
+        0  xAreBlockTimeTestTasksStillRunning
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       8  ?<Constant "BTest1">
+       8  ?<Constant "BTest2">
+       4  ??DataTable4
+       4  ??DataTable4_1
+       4  ??DataTable4_2
+       4  ??DataTable4_3
+       4  ??DataTable4_4
+       4  ??DataTable4_5
+       4  ??DataTable4_6
+       4  ??DataTable4_7
+       4  ??DataTable4_8
+       4  ??DataTable4_9
+     132  prvBasicDelayTests
+     104  vCreateBlockTimeTasks
+     652  vPrimaryBlockTimeTestTask
+     166  vSecondaryBlockTimeTestTask
+      58  xAreBlockTimeTestTasksStillRunning
+       4  xErrorOccurred
+       4  xLastPrimaryCycleCount
+       4  xLastSecondaryCycleCount
+       4  xPrimaryCycles
+       4  xRunIndicator
+       4  xSecondary
+       4  xSecondaryCycles
+       4  xTestQueue
+
+ 
+    32 bytes in section .bss
+    16 bytes in section .rodata
+ 1 152 bytes in section .text
+ 
+ 1 152 bytes of CODE  memory
+    16 bytes of CONST memory
+    32 bytes of DATA  memory
+
+Errors: none
+Warnings: none

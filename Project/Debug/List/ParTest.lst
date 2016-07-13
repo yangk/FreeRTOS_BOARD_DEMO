@@ -1,0 +1,222 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.1.53790/W32 for ARM     23/Mar/2016  10:37:14 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  E:\code\STM32\FreeRTOS\RTOS_test\ParTest\ParTest.c       #
+#    Command line =  E:\code\STM32\FreeRTOS\RTOS_test\ParTest\ParTest.c -D    #
+#                    VECT_TAB_FLASH -D IAR_ARM_CM3 -lcN                       #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\Debug\List\             #
+#                    --diag_suppress Pa082,pe191 -o                           #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\Debug\Obj\ --no_cse     #
+#                    --no_unroll --no_inline --no_code_motion --no_tbaa       #
+#                    --no_clustering --no_scheduling --debug --endian=little  #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Full.h" -I                     #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\.\ -I                   #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\STM32F10xFWLib\inc\ -I  #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\..\..\Source\include\   #
+#                    -I E:\code\STM32\FreeRTOS\RTOS_test\..\common\include\   #
+#                    -Ol --use_c++_inline --require_prototypes                #
+#    List file    =  E:\code\STM32\FreeRTOS\RTOS_test\Debug\List\ParTest.lst  #
+#    Object file  =  E:\code\STM32\FreeRTOS\RTOS_test\Debug\Obj\ParTest.o     #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+E:\code\STM32\FreeRTOS\RTOS_test\ParTest\ParTest.c
+      1          /*
+      2              FreeRTOS V9.0.0rc1 - Copyright (C) 2016 Real Time Engineers Ltd.
+      3              All rights reserved
+      4          
+      5              VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
+      6          
+      7              This file is part of the FreeRTOS distribution.
+      8          
+      9              FreeRTOS is free software; you can redistribute it and/or modify it under
+     10              the terms of the GNU General Public License (version 2) as published by the
+     11              Free Software Foundation >>>> AND MODIFIED BY <<<< the FreeRTOS exception.
+     12          
+     13              ***************************************************************************
+     14              >>!   NOTE: The modification to the GPL is included to allow you to     !<<
+     15              >>!   distribute a combined work that includes FreeRTOS without being   !<<
+     16              >>!   obliged to provide the source code for proprietary components     !<<
+     17              >>!   outside of the FreeRTOS kernel.                                   !<<
+     18              ***************************************************************************
+     19          
+     20              FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
+     21              WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+     22              FOR A PARTICULAR PURPOSE.  Full license text is available on the following
+     23              link: http://www.freertos.org/a00114.html
+     24          
+     25              ***************************************************************************
+     26               *                                                                       *
+     27               *    FreeRTOS provides completely free yet professionally developed,    *
+     28               *    robust, strictly quality controlled, supported, and cross          *
+     29               *    platform software that is more than just the market leader, it     *
+     30               *    is the industry's de facto standard.                               *
+     31               *                                                                       *
+     32               *    Help yourself get started quickly while simultaneously helping     *
+     33               *    to support the FreeRTOS project by purchasing a FreeRTOS           *
+     34               *    tutorial book, reference manual, or both:                          *
+     35               *    http://www.FreeRTOS.org/Documentation                              *
+     36               *                                                                       *
+     37              ***************************************************************************
+     38          
+     39              http://www.FreeRTOS.org/FAQHelp.html - Having a problem?  Start by reading
+     40              the FAQ page "My application does not run, what could be wrong?".  Have you
+     41              defined configASSERT()?
+     42          
+     43              http://www.FreeRTOS.org/support - In return for receiving this top quality
+     44              embedded software for free we request you assist our global community by
+     45              participating in the support forum.
+     46          
+     47              http://www.FreeRTOS.org/training - Investing in training allows your team to
+     48              be as productive as possible as early as possible.  Now you can receive
+     49              FreeRTOS training directly from Richard Barry, CEO of Real Time Engineers
+     50              Ltd, and the world's leading authority on the world's leading RTOS.
+     51          
+     52              http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
+     53              including FreeRTOS+Trace - an indispensable productivity tool, a DOS
+     54              compatible FAT file system, and our tiny thread aware UDP/IP stack.
+     55          
+     56              http://www.FreeRTOS.org/labs - Where new FreeRTOS products go to incubate.
+     57              Come and try FreeRTOS+TCP, our new open source TCP/IP stack for FreeRTOS.
+     58          
+     59              http://www.OpenRTOS.com - Real Time Engineers ltd. license FreeRTOS to High
+     60              Integrity Systems ltd. to sell under the OpenRTOS brand.  Low cost OpenRTOS
+     61              licenses offer ticketed support, indemnification and commercial middleware.
+     62          
+     63              http://www.SafeRTOS.com - High Integrity Systems also provide a safety
+     64              engineered and independently SIL3 certified version for use in safety and
+     65              mission critical applications that require provable dependability.
+     66          
+     67              1 tab == 4 spaces!
+     68          */
+     69          
+     70          /*-----------------------------------------------------------
+     71           * Simple parallel port IO routines.
+     72           *-----------------------------------------------------------*/
+     73          
+     74          /* FreeRTOS.org includes. */
+     75          #include "FreeRTOS.h"
+     76          #include "task.h"
+     77          #include "partest.h"
+     78          
+     79          /* Library includes. */
+     80          #include "stm32f10x_lib.h"
+     81          
+     82          #define partstMAX_OUTPUT_LED	( 4 )
+     83          #define partstFIRST_LED			GPIO_Pin_6
+     84          
+     85          static unsigned short usOutputValue = 0;
+     86          
+     87          /*-----------------------------------------------------------*/
+     88          
+     89          void vParTestInitialise(void)
+     90          {
+     91              GPIO_InitTypeDef GPIO_InitStructure;
+     92          
+     93              /* Configure PC.06, PC.07, PC.08 and PC.09 as output push-pull */
+     94              GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9;
+     95              GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+     96              GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+     97              GPIO_Init(GPIOC, &GPIO_InitStructure);
+     98          }
+     99          
+    100          /*-----------------------------------------------------------*/
+    101          
+    102          void vParTestSetLED(unsigned portBASE_TYPE uxLED, signed portBASE_TYPE xValue)
+    103          {
+    104              unsigned short usBit;
+    105          
+    106              vTaskSuspendAll();
+    107              {
+    108                  if (uxLED < partstMAX_OUTPUT_LED)
+    109                  {
+    110                      usBit = partstFIRST_LED << uxLED;
+    111          
+    112                      if (xValue == pdFALSE)
+    113                      {
+    114                          usBit ^= (unsigned short) 0xffff;
+    115                          usOutputValue &= usBit;
+    116                      }
+    117                      else
+    118                      {
+    119                          usOutputValue |= usBit;
+    120                      }
+    121          
+    122                      GPIO_Write(GPIOC, usOutputValue);
+    123                  }
+    124              }
+    125              xTaskResumeAll();
+    126          }
+    127          
+    128          /*-----------------------------------------------------------*/
+    129          
+    130          void vParTestToggleLED(unsigned portBASE_TYPE uxLED)
+    131          {
+    132              unsigned short usBit;
+    133          
+    134              vTaskSuspendAll();
+    135              {
+    136                  if (uxLED < partstMAX_OUTPUT_LED)
+    137                  {
+    138                      usBit = partstFIRST_LED << uxLED;
+    139          
+    140                      if (usOutputValue & usBit)
+    141                      {
+    142                          usOutputValue &= ~usBit;
+    143                      }
+    144                      else
+    145                      {
+    146                          usOutputValue |= usBit;
+    147                      }
+    148          
+    149                      GPIO_Write(GPIOC, usOutputValue);
+    150                  }
+    151              }
+    152              xTaskResumeAll();
+    153          }
+    154          
+    155          /*-----------------------------------------------------------*/
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+        8  vParTestInitialise
+              8 -> GPIO_Init
+       16  vParTestSetLED
+             16 -> GPIO_Write
+             16 -> vTaskSuspendAll
+             16 -> xTaskResumeAll
+        8  vParTestToggleLED
+              8 -> GPIO_Write
+              8 -> vTaskSuspendAll
+              8 -> xTaskResumeAll
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable2
+       4  ??DataTable2_1
+       2  usOutputValue
+      34  vParTestInitialise
+      70  vParTestSetLED
+      66  vParTestToggleLED
+
+ 
+   2 bytes in section .bss
+ 178 bytes in section .text
+ 
+ 178 bytes of CODE memory
+   2 bytes of DATA memory
+
+Errors: none
+Warnings: none

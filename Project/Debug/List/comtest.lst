@@ -1,0 +1,390 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.40.1.53790/W32 for ARM     23/Mar/2016  10:37:15 #
+# Copyright 1999-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  E:\code\STM32\FreeRTOS\Common\Minimal\comtest.c          #
+#    Command line =  E:\code\STM32\FreeRTOS\Common\Minimal\comtest.c -D       #
+#                    VECT_TAB_FLASH -D IAR_ARM_CM3 -lcN                       #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\Debug\List\             #
+#                    --diag_suppress Pa082,pe191 -o                           #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\Debug\Obj\ --no_cse     #
+#                    --no_unroll --no_inline --no_code_motion --no_tbaa       #
+#                    --no_clustering --no_scheduling --debug --endian=little  #
+#                    --cpu=Cortex-M3 -e --fpu=None --dlib_config "C:\Program  #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.4\arm\INC\c\DLib_Config_Full.h" -I                     #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\.\ -I                   #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\STM32F10xFWLib\inc\ -I  #
+#                    E:\code\STM32\FreeRTOS\RTOS_test\..\..\Source\include\   #
+#                    -I E:\code\STM32\FreeRTOS\RTOS_test\..\common\include\   #
+#                    -Ol --use_c++_inline --require_prototypes                #
+#    List file    =  E:\code\STM32\FreeRTOS\RTOS_test\Debug\List\comtest.lst  #
+#    Object file  =  E:\code\STM32\FreeRTOS\RTOS_test\Debug\Obj\comtest.o     #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+E:\code\STM32\FreeRTOS\Common\Minimal\comtest.c
+      1          /*
+      2              FreeRTOS V9.0.0rc1 - Copyright (C) 2016 Real Time Engineers Ltd.
+      3              All rights reserved
+      4          
+      5              VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
+      6          
+      7              This file is part of the FreeRTOS distribution.
+      8          
+      9              FreeRTOS is free software; you can redistribute it and/or modify it under
+     10              the terms of the GNU General Public License (version 2) as published by the
+     11              Free Software Foundation >>>> AND MODIFIED BY <<<< the FreeRTOS exception.
+     12          
+     13              ***************************************************************************
+     14              >>!   NOTE: The modification to the GPL is included to allow you to     !<<
+     15              >>!   distribute a combined work that includes FreeRTOS without being   !<<
+     16              >>!   obliged to provide the source code for proprietary components     !<<
+     17              >>!   outside of the FreeRTOS kernel.                                   !<<
+     18              ***************************************************************************
+     19          
+     20              FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
+     21              WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+     22              FOR A PARTICULAR PURPOSE.  Full license text is available on the following
+     23              link: http://www.freertos.org/a00114.html
+     24          
+     25              ***************************************************************************
+     26               *                                                                       *
+     27               *    FreeRTOS provides completely free yet professionally developed,    *
+     28               *    robust, strictly quality controlled, supported, and cross          *
+     29               *    platform software that is more than just the market leader, it     *
+     30               *    is the industry's de facto standard.                               *
+     31               *                                                                       *
+     32               *    Help yourself get started quickly while simultaneously helping     *
+     33               *    to support the FreeRTOS project by purchasing a FreeRTOS           *
+     34               *    tutorial book, reference manual, or both:                          *
+     35               *    http://www.FreeRTOS.org/Documentation                              *
+     36               *                                                                       *
+     37              ***************************************************************************
+     38          
+     39              http://www.FreeRTOS.org/FAQHelp.html - Having a problem?  Start by reading
+     40              the FAQ page "My application does not run, what could be wrong?".  Have you
+     41              defined configASSERT()?
+     42          
+     43              http://www.FreeRTOS.org/support - In return for receiving this top quality
+     44              embedded software for free we request you assist our global community by
+     45              participating in the support forum.
+     46          
+     47              http://www.FreeRTOS.org/training - Investing in training allows your team to
+     48              be as productive as possible as early as possible.  Now you can receive
+     49              FreeRTOS training directly from Richard Barry, CEO of Real Time Engineers
+     50              Ltd, and the world's leading authority on the world's leading RTOS.
+     51          
+     52              http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
+     53              including FreeRTOS+Trace - an indispensable productivity tool, a DOS
+     54              compatible FAT file system, and our tiny thread aware UDP/IP stack.
+     55          
+     56              http://www.FreeRTOS.org/labs - Where new FreeRTOS products go to incubate.
+     57              Come and try FreeRTOS+TCP, our new open source TCP/IP stack for FreeRTOS.
+     58          
+     59              http://www.OpenRTOS.com - Real Time Engineers ltd. license FreeRTOS to High
+     60              Integrity Systems ltd. to sell under the OpenRTOS brand.  Low cost OpenRTOS
+     61              licenses offer ticketed support, indemnification and commercial middleware.
+     62          
+     63              http://www.SafeRTOS.com - High Integrity Systems also provide a safety
+     64              engineered and independently SIL3 certified version for use in safety and
+     65              mission critical applications that require provable dependability.
+     66          
+     67              1 tab == 4 spaces!
+     68          */
+     69          
+     70          
+     71          /*
+     72           * This version of comtest. c is for use on systems that have limited stack
+     73           * space and no display facilities.  The complete version can be found in
+     74           * the Demo/Common/Full directory.
+     75           *
+     76           * Creates two tasks that operate on an interrupt driven serial port.  A
+     77           * loopback connector should be used so that everything that is transmitted is
+     78           * also received.  The serial port does not use any flow control.  On a
+     79           * standard 9way 'D' connector pins two and three should be connected together.
+     80           *
+     81           * The first task posts a sequence of characters to the Tx queue, toggling an
+     82           * LED on each successful post.  At the end of the sequence it sleeps for a
+     83           * pseudo-random period before resending the same sequence.
+     84           *
+     85           * The UART Tx end interrupt is enabled whenever data is available in the Tx
+     86           * queue.  The Tx end ISR removes a single character from the Tx queue and
+     87           * passes it to the UART for transmission.
+     88           *
+     89           * The second task blocks on the Rx queue waiting for a character to become
+     90           * available.  When the UART Rx end interrupt receives a character it places
+     91           * it in the Rx queue, waking the second task.  The second task checks that the
+     92           * characters removed from the Rx queue form the same sequence as those posted
+     93           * to the Tx queue, and toggles an LED for each correct character.
+     94           *
+     95           * The receiving task is spawned with a higher priority than the transmitting
+     96           * task.  The receiver will therefore wake every time a character is
+     97           * transmitted so neither the Tx or Rx queue should ever hold more than a few
+     98           * characters.
+     99           *
+    100           */
+    101          
+    102          /* Scheduler include files. */
+    103          #include <stdlib.h>
+    104          #include "FreeRTOS.h"
+    105          #include "task.h"
+    106          
+    107          /* Demo program include files. */
+    108          #include "serial.h"
+    109          #include "comtest.h"
+    110          #include "partest.h"
+    111          
+    112          #define comSTACK_SIZE				configMINIMAL_STACK_SIZE
+    113          #define comTX_LED_OFFSET			( 0 )
+    114          #define comRX_LED_OFFSET			( 1 )
+    115          #define comTOTAL_PERMISSIBLE_ERRORS ( 2 )
+    116          
+    117          /* The Tx task will transmit the sequence of characters at a pseudo random
+    118          interval.  This is the maximum and minimum block time between sends. */
+    119          #define comTX_MAX_BLOCK_TIME		( ( TickType_t ) 0x96 )
+    120          #define comTX_MIN_BLOCK_TIME		( ( TickType_t ) 0x32 )
+    121          #define comOFFSET_TIME				( ( TickType_t ) 3 )
+    122          
+    123          /* We should find that each character can be queued for Tx immediately and we
+    124          don't have to block to send. */
+    125          #define comNO_BLOCK					( ( TickType_t ) 0 )
+    126          
+    127          /* The Rx task will block on the Rx queue for a long period. */
+    128          #define comRX_BLOCK_TIME			( ( TickType_t ) 0xffff )
+    129          
+    130          /* The sequence transmitted is from comFIRST_BYTE to and including comLAST_BYTE. */
+    131          #define comFIRST_BYTE				( 'A' )
+    132          #define comLAST_BYTE				( 'X' )
+    133          
+    134          #define comBUFFER_LEN				( ( UBaseType_t ) ( comLAST_BYTE - comFIRST_BYTE ) + ( UBaseType_t ) 1 )
+    135          #define comINITIAL_RX_COUNT_VALUE	( 0 )
+    136          
+    137          /* Handle to the com port used by both tasks. */
+    138          static xComPortHandle xPort = NULL;
+    139          
+    140          /* The transmit task as described at the top of the file. */
+    141          static portTASK_FUNCTION_PROTO(vComTxTask, pvParameters);
+    142          
+    143          /* The receive task as described at the top of the file. */
+    144          static portTASK_FUNCTION_PROTO(vComRxTask, pvParameters);
+    145          
+    146          /* The LED that should be toggled by the Rx and Tx tasks.  The Rx task will
+    147          toggle LED ( uxBaseLED + comRX_LED_OFFSET).  The Tx task will toggle LED
+    148          ( uxBaseLED + comTX_LED_OFFSET ). */
+    149          static UBaseType_t uxBaseLED = 0;
+    150          
+    151          /* Check variable used to ensure no error have occurred.  The Rx task will
+    152          increment this variable after every successfully received sequence.  If at any
+    153          time the sequence is incorrect the the variable will stop being incremented. */
+    154          static volatile UBaseType_t uxRxLoops = comINITIAL_RX_COUNT_VALUE;
+    155          
+    156          /*-----------------------------------------------------------*/
+    157          
+    158          void vAltStartComTestTasks(UBaseType_t uxPriority, uint32_t ulBaudRate, UBaseType_t uxLED)
+    159          {
+    160              /* Initialise the com port then spawn the Rx and Tx tasks. */
+    161              uxBaseLED = uxLED;
+    162              xSerialPortInitMinimal(ulBaudRate, comBUFFER_LEN);
+    163          
+    164              /* The Tx task is spawned with a lower priority than the Rx task. */
+    165              xTaskCreate(vComTxTask, "COMTx", comSTACK_SIZE, NULL, uxPriority - 1, (TaskHandle_t *) NULL);
+    166              xTaskCreate(vComRxTask, "COMRx", comSTACK_SIZE, NULL, uxPriority, (TaskHandle_t *) NULL);
+    167          }
+    168          
+    169          /*-----------------------------------------------------------*/
+    170          
+    171          static portTASK_FUNCTION(vComTxTask, pvParameters)
+    172          {
+    173              char cByteToSend;
+    174              TickType_t xTimeToWait;
+    175          
+    176              /* Just to stop compiler warnings. */
+    177              (void) pvParameters;
+    178          
+    179              for (;;)
+    180              {
+    181                  /* Simply transmit a sequence of characters from comFIRST_BYTE to
+    182                     comLAST_BYTE. */
+    183                  for (cByteToSend = comFIRST_BYTE; cByteToSend <= comLAST_BYTE; cByteToSend++)
+    184                  {
+    185                      if (xSerialPutChar(xPort, cByteToSend, comNO_BLOCK) == pdPASS)
+    186                      {
+    187                          vParTestToggleLED(uxBaseLED + comTX_LED_OFFSET);
+    188                      }
+    189                  }
+    190          
+    191                  /* Turn the LED off while we are not doing anything. */
+    192                  vParTestSetLED(uxBaseLED + comTX_LED_OFFSET, pdFALSE);
+    193          
+    194                  /* We have posted all the characters in the string - wait before
+    195                     re-sending.  Wait a pseudo-random time as this will provide a better
+    196                     test. */
+    197                  xTimeToWait = xTaskGetTickCount() + comOFFSET_TIME;
+    198          
+    199                  /* Make sure we don't wait too long... */
+    200                  xTimeToWait %= comTX_MAX_BLOCK_TIME;
+    201          
+    202                  /* ...but we do want to wait. */
+    203                  if (xTimeToWait < comTX_MIN_BLOCK_TIME)
+    204                  {
+    205                      xTimeToWait = comTX_MIN_BLOCK_TIME;
+    206                  }
+    207          
+    208                  vTaskDelay(xTimeToWait);
+    209              }
+    210          }                               /*lint !e715 !e818 pvParameters is required for a task function even if it is not referenced. */
+    211          
+    212          /*-----------------------------------------------------------*/
+    213          
+    214          static portTASK_FUNCTION(vComRxTask, pvParameters)
+    215          {
+    216              signed char cExpectedByte, cByteRxed;
+    217              BaseType_t xResyncRequired = pdFALSE, xErrorOccurred = pdFALSE;
+    218          
+    219              /* Just to stop compiler warnings. */
+    220              (void) pvParameters;
+    221          
+    222              for (;;)
+    223              {
+    224                  /* We expect to receive the characters from comFIRST_BYTE to
+    225                     comLAST_BYTE in an incrementing order.  Loop to receive each byte. */
+    226                  for (cExpectedByte = comFIRST_BYTE; cExpectedByte <= comLAST_BYTE; cExpectedByte++)
+    227                  {
+    228                      /* Block on the queue that contains received bytes until a byte is
+    229                         available. */
+    230                      if (xSerialGetChar(xPort, &cByteRxed, comRX_BLOCK_TIME))
+    231                      {
+    232                          /* Was this the byte we were expecting?  If so, toggle the LED,
+    233                             otherwise we are out on sync and should break out of the loop
+    234                             until the expected character sequence is about to restart. */
+    235                          if (cByteRxed == cExpectedByte)
+    236                          {
+    237                              vParTestToggleLED(uxBaseLED + comRX_LED_OFFSET);
+    238                          }
+    239                          else
+    240                          {
+    241                              xResyncRequired = pdTRUE;
+    242                              break;      /*lint !e960 Non-switch break allowed. */
+    243                          }
+    244                      }
+    245                  }
+    246          
+    247                  /* Turn the LED off while we are not doing anything. */
+    248                  vParTestSetLED(uxBaseLED + comRX_LED_OFFSET, pdFALSE);
+    249          
+    250                  /* Did we break out of the loop because the characters were received in
+    251                     an unexpected order?  If so wait here until the character sequence is
+    252                     about to restart. */
+    253                  if (xResyncRequired == pdTRUE)
+    254                  {
+    255                      while (cByteRxed != comLAST_BYTE)
+    256                      {
+    257                          /* Block until the next char is available. */
+    258                          xSerialGetChar(xPort, &cByteRxed, comRX_BLOCK_TIME);
+    259                      }
+    260          
+    261                      /* Note that an error occurred which caused us to have to resync.
+    262                         We use this to stop incrementing the loop counter so
+    263                         sAreComTestTasksStillRunning() will return false - indicating an
+    264                         error. */
+    265                      xErrorOccurred++;
+    266          
+    267                      /* We have now resynced with the Tx task and can continue. */
+    268                      xResyncRequired = pdFALSE;
+    269                  }
+    270                  else
+    271                  {
+    272                      if (xErrorOccurred < comTOTAL_PERMISSIBLE_ERRORS)
+    273                      {
+    274                          /* Increment the count of successful loops.  As error
+    275                             occurring (i.e. an unexpected character being received) will
+    276                             prevent this counter being incremented for the rest of the
+    277                             execution.   Don't worry about mutual exclusion on this
+    278                             variable - it doesn't really matter as we just want it
+    279                             to change. */
+    280                          uxRxLoops++;
+    281                      }
+    282                  }
+    283              }
+    284          }                               /*lint !e715 !e818 pvParameters is required for a task function even if it is not referenced. */
+    285          
+    286          /*-----------------------------------------------------------*/
+    287          
+    288          BaseType_t xAreComTestTasksStillRunning(void)
+    289          {
+    290              BaseType_t xReturn;
+    291          
+    292              /* If the count of successful reception loops has not changed than at
+    293                 some time an error occurred (i.e. a character was received out of sequence)
+    294                 and we will return false. */
+    295              if (uxRxLoops == comINITIAL_RX_COUNT_VALUE)
+    296              {
+    297                  xReturn = pdFALSE;
+    298              }
+    299              else
+    300              {
+    301                  xReturn = pdTRUE;
+    302              }
+    303          
+    304              /* Reset the count of successful Rx loops.  When this function is called
+    305                 again we expect this to have been incremented. */
+    306              uxRxLoops = comINITIAL_RX_COUNT_VALUE;
+    307          
+    308              return xReturn;
+    309          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       32  vAltStartComTestTasks
+             32 -> xSerialPortInitMinimal
+             32 -> xTaskGenericCreate
+        8  vComRxTask
+              8 -> vParTestSetLED
+              8 -> vParTestToggleLED
+              8 -> xSerialGetChar
+        0  vComTxTask
+              0 -> vParTestSetLED
+              0 -> vParTestToggleLED
+              0 -> vTaskDelay
+              0 -> xSerialPutChar
+              0 -> xTaskGetTickCount
+        0  xAreComTestTasksStillRunning
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       8  ?<Constant "COMRx">
+       8  ?<Constant "COMTx">
+       4  ??DataTable3
+       4  ??DataTable3_1
+       4  ??DataTable3_2
+       4  ??DataTable3_3
+       4  ??DataTable3_4
+       4  uxBaseLED
+       4  uxRxLoops
+      88  vAltStartComTestTasks
+     118  vComRxTask
+      76  vComTxTask
+      22  xAreComTestTasksStillRunning
+       4  xPort
+
+ 
+  12 bytes in section .bss
+  16 bytes in section .rodata
+ 324 bytes in section .text
+ 
+ 324 bytes of CODE  memory
+  16 bytes of CONST memory
+  12 bytes of DATA  memory
+
+Errors: none
+Warnings: none
