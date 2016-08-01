@@ -163,6 +163,7 @@ void uart_task_handler(void *args)
             if (port->uart_frame_hook) 
             {
                 port->uart_frame_hook(cache, len);
+                len = 0;
             }
         }
     }

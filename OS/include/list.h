@@ -206,10 +206,10 @@ use of FreeRTOS.*/
     typedef struct xLIST
     {
         listFIRST_LIST_INTEGRITY_CHECK_VALUE    /*< Set to a known value if configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES is set to 1. */
-        configLIST_VOLATILE UBaseType_t uxNumberOfItems;//链表中的节点数目
+        configLIST_VOLATILE UBaseType_t uxNumberOfItems;//链表中的链表项数目
         ListItem_t *configLIST_VOLATILE pxIndex;    /* 用于遍历链表中的所有节点 */
         MiniListItem_t xListEnd;    /*用于记录结束节点标志*/
-         listSECOND_LIST_INTEGRITY_CHECK_VALUE  /*< Set to a known value if configUSE_LIST_DATA_INTEGRITY_CHECK_BYTES is set to 1. */
+        listSECOND_LIST_INTEGRITY_CHECK_VALUE  /*用于检测列表项数据是否完整 */
     } List_t;
 
 /*

@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=-381098851
+Checksum=1775688508
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -58,6 +58,12 @@ EventLSU=0
 EventSLEEP=0
 [JLinkDriver]
 CStepIntDis=_ 0
+[DriverProfiling]
+Enabled=0
+Mode=0
+Graph=0
+Symbiont=0
+Exclusions=
 [struct_types]
 Fmt0=struct tskTaskControlBlock-pxTopOfStack	4	0
 [array_types]
@@ -73,17 +79,13 @@ LoggingEnabled=_ 0
 LogFile=_ ""
 [CallStackLog]
 Enabled=0
-[DriverProfiling]
-Enabled=0
-Mode=0
-Graph=0
-Symbiont=0
-Exclusions=
+[CallStackStripe]
+ShowTiming=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
 Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$}.209.2" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\User\stm32f10x_it.c}.156.1" 0 0 1 "" 0 "" 0
+Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\User\stm32f10x_it.c}.156.1" 0 0 1 "" 0 "" 0
 Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$}.74.9" 0 0 1 "" 0 "" 0
 Bp3=_ 0 "EMUL_CODE" "{$PROJ_DIR$}.46.18" 0 0 1 "" 0 "" 0
 Bp4=_ 0 "EMUL_CODE" "{$PROJ_DIR$}.55.9" 0 0 1 "" 0 "" 0

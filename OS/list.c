@@ -152,6 +152,7 @@ void vListInsert(List_t * const pxList, ListItem_t * const pxNewListItem)
     /* Only effective when configASSERT() is also defined, these tests may catch
        the list data structures being overwritten in memory.  They will not catch
        data errors caused by incorrect configuration or use of FreeRTOS. */
+    /* 检查列表和列表项数据的完整性，仅当configASSERT()定义时有效。*/ 
     listTEST_LIST_INTEGRITY(pxList);
     listTEST_LIST_ITEM_INTEGRITY(pxNewListItem);
 
@@ -163,6 +164,7 @@ void vListInsert(List_t * const pxList, ListItem_t * const pxNewListItem)
        share of the CPU.  However, if the xItemValue is the same as the back marker
        the iteration loop below will not end.  Therefore the value is checked
        first, and the algorithm slightly modified if necessary. */
+    /*将新的列表项插入到列表，根据xItemValue的值降序插入列表。*/
     if (xValueOfInsertion == portMAX_DELAY)
     {
         pxIterator = pxList->xListEnd.pxPrevious;

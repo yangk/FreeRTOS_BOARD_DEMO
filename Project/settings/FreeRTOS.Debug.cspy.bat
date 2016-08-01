@@ -19,6 +19,22 @@
 @REM 
 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0\common\bin\cspybat" "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0\arm\bin\armproc.dll" "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0\arm\bin\armjlink.dll"  %1 --plugin "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0\arm\bin\armbat.dll" --device_macro "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0\arm\config\debugger\ST\STM32F1xx.dmac" --flash_loader "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0\arm\config\flashloader\ST\FlashSTM32F10xxB.board" --backend -B "--endian=little" "--cpu=Cortex-M3" "--fpu=None" "-p" "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0\arm\CONFIG\debugger\ST\STM32F103xB.ddf" "--drv_verify_download" "--semihosting=none" "--device=STM32F103xB" "--drv_communication=USB0" "--jlink_speed=auto" "--jlink_initial_speed=32" "--jlink_reset_strategy=0,0" "--drv_catch_exceptions=0x000" "--drv_swo_clock_setup=72000000,0,2000000" 
+@echo off 
 
+if not "%1" == "" goto debugFile 
 
+@echo on 
+
+"F:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "C:\Users\yk\Desktop\FreeRTOS\FreeRTOS_BOARD\Project\settings\FreeRTOS.Debug.general.xcl" --backend -f "C:\Users\yk\Desktop\FreeRTOS\FreeRTOS_BOARD\Project\settings\FreeRTOS.Debug.driver.xcl" 
+
+@echo off 
+goto end 
+
+:debugFile 
+
+@echo on 
+
+"F:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "C:\Users\yk\Desktop\FreeRTOS\FreeRTOS_BOARD\Project\settings\FreeRTOS.Debug.general.xcl" "--debug_file=%1" --backend -f "C:\Users\yk\Desktop\FreeRTOS\FreeRTOS_BOARD\Project\settings\FreeRTOS.Debug.driver.xcl" 
+
+@echo off 
+:end

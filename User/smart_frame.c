@@ -9,7 +9,10 @@
 #include "smart_frame.h"
 #include "spiflash.h"
 #include "dev_ctrl.h"
+#include "debug.h"
 
+#define frame_opt_log(M, ...) custom_log("frame_opt", M, ##__VA_ARGS__)
+#define frame_opt_log_trace() custom_log_trace("frame_opt")
 //---------------------------------------------------------------------------------------------
 int uart_frame_opt(uint8_t buffer[], int len)
 {
@@ -18,33 +21,30 @@ int uart_frame_opt(uint8_t buffer[], int len)
 //---------------------------------------------------------------------------------------------
 void key1_hook(void)
 {
-    printf("key1 hook\r\n");
+    frame_opt_log_trace();
+    //frame_opt_log("key1 hook");
     vTaskDelay(50/portTICK_RATE_MS);
 }
 //---------------------------------------------------------------------------------------------
 void key2_hook(void)
 {
-    printf("key2 hook\r\n");
-#if 0    
-    uint8_t data[] = "flash test";
-    uint8_t rvdata[50] = "fail test!!!!!\n";
-    SPI_FLASH_SectorErase(0x00);
-    flash_write(0X1000,data,sizeof(data));
-    flash_read(0x00,rvdata,sizeof(data));
-    printf("%s\r\n",rvdata);
-#endif
+    frame_opt_log_trace();
+    //frame_opt_log("key2 hook");
     vTaskDelay(50/portTICK_RATE_MS);
 }
 //---------------------------------------------------------------------------------------------
 void key1_long_hook(void)
 {
-    printf("key1 long hook\r\n");
+    frame_opt_log_trace();
+    //frame_opt_log("key1 long hook");
     vTaskDelay(50/portTICK_RATE_MS);
 }
 //---------------------------------------------------------------------------------------------
 void key2_long_hook(void)
 {
-    printf("key2 long hook\r\n");
+    frame_opt_log_trace();
+    vTaskDelay(50/portTICK_RATE_MS);
+    frame_opt_log("key2 long hook");
     vTaskDelay(50/portTICK_RATE_MS);
 }
 //---------------------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ void key2_long_hook(void)
  {
     for( ;; )
     {
-        printf("idle_hook!!\r\n");
+        frame_opt_log("idle hook");
     }
  }
 //---------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ void vApplicationMallocFailedHook( void )
 {
     for( ;; )
     {
-        printf("malloc failed!!\r\n");
+        frame_opt_log("malloc failed");
     }
 }
 //---------------------------------------------------------------------------------------------
