@@ -25,7 +25,7 @@ if not "%1" == "" goto debugFile
 
 @echo on 
 
-"F:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "C:\Users\yk\Desktop\FreeRTOS\FreeRTOS_BOARD\Project\settings\FreeRTOS.Debug.general.xcl" --backend -f "C:\Users\yk\Desktop\FreeRTOS\FreeRTOS_BOARD\Project\settings\FreeRTOS.Debug.driver.xcl" 
+"F:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "F:\github\FreeRTOS_BOARD_DEMO\Project\settings\FreeRTOS.Debug.general.xcl" --backend -f "F:\github\FreeRTOS_BOARD_DEMO\Project\settings\FreeRTOS.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"F:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "C:\Users\yk\Desktop\FreeRTOS\FreeRTOS_BOARD\Project\settings\FreeRTOS.Debug.general.xcl" "--debug_file=%1" --backend -f "C:\Users\yk\Desktop\FreeRTOS\FreeRTOS_BOARD\Project\settings\FreeRTOS.Debug.driver.xcl" 
+"F:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "F:\github\FreeRTOS_BOARD_DEMO\Project\settings\FreeRTOS.Debug.general.xcl" "--debug_file=%1" --backend -f "F:\github\FreeRTOS_BOARD_DEMO\Project\settings\FreeRTOS.Debug.driver.xcl" 
 
 @echo off 
 :end

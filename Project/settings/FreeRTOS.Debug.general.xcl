@@ -2,7 +2,7 @@
 
 "F:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\arm\bin\armjlink.dll" 
 
-"C:\Users\yk\Desktop\FreeRTOS\FreeRTOS_BOARD\Project\Debug\Exe\FreeRTOS.out" 
+"F:\github\FreeRTOS_BOARD_DEMO\Project\Debug\Exe\FreeRTOS.out" 
 
 --plugin "F:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\arm\bin\armbat.dll" 
 
