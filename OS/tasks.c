@@ -2220,7 +2220,7 @@ BaseType_t xTaskIncrementTick(void)
             /* Minor optimisation.  The tick count cannot change in this
                block. */
             const TickType_t xConstTickCount = xTickCount;
-
+            /*检测计数值是否溢出，若溢出交换延时列表指针和溢出延时列表指针*/
             if (xConstTickCount == (TickType_t) 0U)
             {
                 taskSWITCH_DELAYED_LISTS();
@@ -2234,6 +2234,7 @@ BaseType_t xTaskIncrementTick(void)
                the  queue in the order of their wake time - meaning once one task
                has been found whose block time has not expired there is no need to
                look any further down the list. */
+            /*延时的任务到期，需要被唤醒*/
             if (xConstTickCount >= xNextTaskUnblockTime)
             {
                 for (;;)
@@ -3587,7 +3588,7 @@ static void prvDeleteTCB(TCB_t * pxTCB)
 
 #endif                          /* INCLUDE_vTaskDelete */
 /*-----------------------------------------------------------*/
-
+/*重新获取下一次解除阻塞的时间*/
 static void prvResetNextTaskUnblockTime(void)
 {
     TCB_t *pxTCB;
@@ -4699,7 +4700,7 @@ static void prvAddCurrentTaskToDelayedList(TickType_t xTicksToWait, const BaseTy
 
             /* The list item will be inserted in wake time order. */
             listSET_LIST_ITEM_VALUE(&(pxCurrentTCB->xStateListItem), xTimeToWake);
-
+            /*时间值已经溢出*/
             if (xTimeToWake < xTickCount)
             {
                 /* Wake time has overflowed.  Place this item in the overflow
